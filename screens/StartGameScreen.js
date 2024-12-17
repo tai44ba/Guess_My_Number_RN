@@ -1,9 +1,12 @@
 import { useState } from "react";
-import { View, TextInput, StyleSheet, Alert } from "react-native";
+import { View, TextInput, StyleSheet, Alert, Text } from "react-native";
+import Card from "../components/Card";
+import InstructorText from "../components/InstructorText";
 import PrimaryButton from "../components/PrimaryButton";
+import Title from "../components/Title";
 import { Colors } from "../utils/color";
 
-function StartGameScreen({onPickedNum}) {
+function StartGameScreen({ onPickedNum }) {
   const [enterNum, setEnterNum] = useState("");
   const handleInput = (Input) => {
     setEnterNum(Input);
@@ -15,49 +18,44 @@ function StartGameScreen({onPickedNum}) {
     const parsedToNum = parseInt(enterNum);
     if (isNaN(parsedToNum) || parsedToNum <= 0 || parsedToNum > 99) {
       Alert.alert("Invaild Number", "The number has to be between 1 and 99", [
-        {text:'Okey',style:'destructive',onPress:resetInput},
+        { text: "Okey", style: "destructive", onPress: resetInput },
       ]);
       return;
     }
-    onPickedNum(parsedToNum)
+    onPickedNum(parsedToNum);
   };
   return (
-    <View style={styles.inputContainer}>
-      <TextInput
-        style={styles.input}
-        maxLength={2}
-        keyboardType="number-pad"
-        autoCapitalize="none"
-        autoCorrect={false}
-        onChangeText={handleInput}
-        value={enterNum}
-      />
-      <View style={styles.BsContainer}>
-        <View style={styles.BContainer}>
-          <PrimaryButton onPress={resetInput}>Reset</PrimaryButton>
+    <View style={styles.rootContainer}>
+      <Title>Guess My Number</Title>
+      <Card>
+        <InstructorText>Enter the Number</InstructorText>
+        <TextInput
+          style={styles.input}
+          maxLength={2}
+          keyboardType="number-pad"
+          autoCapitalize="none"
+          autoCorrect={false}
+          onChangeText={handleInput}
+          value={enterNum}
+        />
+        <View style={styles.BsContainer}>
+          <View style={styles.BContainer}>
+            <PrimaryButton onPress={resetInput}>Reset</PrimaryButton>
+          </View>
+          <View style={styles.BContainer}>
+            <PrimaryButton onPress={confirmInput}>Confirm</PrimaryButton>
+          </View>
         </View>
-        <View style={styles.BContainer}>
-          <PrimaryButton onPress={confirmInput}>Confirm</PrimaryButton>
-        </View>
-      </View>
+      </Card>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  inputContainer: {
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 16,
+  rootContainer: {
+    flex: 1,
     marginTop: 100,
-    marginHorizontal: 24,
-    borderRadius: 8,
-    backgroundColor:Colors.primary800,
-    elevation: 12,
-    shadowColor: "black",
-    shadowOffset: { width: 1, height: 2 },
-    shadowRadius: 6,
-    shadowOpacity: 0.4,
+    alignItems: "center",
   },
   input: {
     height: 55,
