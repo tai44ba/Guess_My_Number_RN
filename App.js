@@ -13,21 +13,27 @@ import GameOverScreen from "./screens/GameOverScreen";
 export default function App() {
   const [userNum, setUserNum] = useState(null)
   const [gameOver, setGameOver] = useState(false)
+  const [rounds, setRounds] = useState(0)
+
   const pickedNumHandler = (pickedNum) => {
     setUserNum(pickedNum)
     setGameOver(false)
   }
-
-  const gameOverHandler = () => { 
+  const gameOverHandler = (playedNum) => { 
     setGameOver(true)
+    setRounds(playedNum)
+  }
+  const gamaStartAgain = () => {
+    setUserNum(null)
+    setRounds(0)
   }
 
   let screen = <StartGameScreen onPickedNum={pickedNumHandler} />
   if (userNum) {
     screen = <GameScreen userNum={userNum} gameOverHandler={gameOverHandler} />
   }
-  if (gameOver) {
-    screen = <GameOverScreen />
+  if (gameOver && userNum) {
+    screen = <GameOverScreen userNum={userNum} rounds={rounds} onStartAgain={gamaStartAgain}/>
   }
   const [fontsLoaded] =  useFonts({
     'open-sans': require('./assets/fonts/OpenSans-Regular.ttf'),
