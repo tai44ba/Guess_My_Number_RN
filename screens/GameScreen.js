@@ -1,5 +1,12 @@
 import { useEffect, useState } from "react";
-import { View, Text, StyleSheet, Alert, FlatList } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Alert,
+  FlatList,
+  useWindowDimensions,
+} from "react-native";
 import Card from "../components/Card";
 import InstructorText from "../components/InstructorText";
 import NumberContaner from "../components/NumberContaner";
@@ -25,6 +32,7 @@ const GameScreen = ({ userNum, gameOverHandler }) => {
   const initGuess = generateRandomBetween(1, 100, userNum);
   const [currentGuess, setCurrentGuess] = useState(initGuess);
   const [guessRounds, setGuessRounds] = useState([]);
+  const { width, height } = useWindowDimensions();
 
   useEffect(() => {
     if (userNum === currentGuess) {
@@ -59,9 +67,8 @@ const GameScreen = ({ userNum, gameOverHandler }) => {
 
   const GRLlength = guessRounds.length;
 
-  return (
-    <View style={styles.screen}>
-      <Title>Opponent's Guess</Title>
+  let content = (
+    <>
       <NumberContaner>{currentGuess}</NumberContaner>
       <Card>
         <InstructorText style={styles.instructionText}>
@@ -80,13 +87,51 @@ const GameScreen = ({ userNum, gameOverHandler }) => {
           </View>
         </View>
       </Card>
+    </>
+  );
+
+  if (height < 600) {
+    content = (
+      <>
+        <View style={styles.btnsContainerWide}>
+          <View style={styles.btnContainer}>
+            <PrimaryButton onPress={nextGuessHandler.bind(this, "lower")}>
+              <Ionicons name="arrow-down" size={24} color="white" />
+            </PrimaryButton>
+          </View>
+          <NumberContaner>{currentGuess}</NumberContaner>
+          <View style={styles.btnContainer}>
+            <PrimaryButton onPress={nextGuessHandler.bind(this, "greater")}>
+              <Ionicons name="arrow-up" size={24} color="white" />
+            </PrimaryButton>
+          </View>
+        </View>
+      </>
+    );
+  }
+
+  const dinamicMarginTop = height < 600 ? 25 : 50;
+  const dinamicPaddingHorizontal = height < 600 ? 40 : 12;
+
+  return (
+    <View
+      style={[
+        styles.screen,
+        {
+          marginTop: dinamicMarginTop,
+          paddingHorizontal: dinamicPaddingHorizontal,
+        },
+      ]}
+    >
+      <Title>Opponent's Guess</Title>
+      {content}
       <View style={styles.GRContainer}>
         <FlatList
           data={guessRounds}
           renderItem={(itemData) => {
             return (
               <GuessRoundsItem
-                guess={currentGuess}
+                guess={itemData.item}
                 roundsNum={GRLlength - itemData.index}
               >
                 {itemData.item}
@@ -105,8 +150,9 @@ export default GameScreen;
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    marginTop: 50,
-    alignItems:'center'
+    // marginTop: 50,
+    alignItems: "center",
+    // paddingHorizontal: 40,
   },
   btnsContainer: {
     flexDirection: "row",
@@ -117,8 +163,13 @@ const styles = StyleSheet.create({
   instructionText: {
     marginBottom: 24,
   },
-  GRContainer:{
-    flex:1,
-    padding:8
-  }
+  GRContainer: {
+    flex: 1,
+    padding: 8,
+  },
+  btnsContainerWide: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop:12
+  },
 });
